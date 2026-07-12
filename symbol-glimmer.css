@@ -1,0 +1,20 @@
+.symbol-text.is-glimmering {
+  animation: symbol-glimmer 10s cubic-bezier(0.45, 0, 0.55, 1) var(--glimmer-delay, 0s) both;
+}
+
+@keyframes symbol-glimmer {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .symbol-text.is-glimmering {
+    animation-duration: 16s;
+  }
+}

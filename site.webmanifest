@@ -1,0 +1,11 @@
+{
+  "name": "Lex Tariq",
+  "short_name": "Lex Tariq",
+  "description": "Lex Tariq",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F4F5F7",
+  "theme_color": "#F4F5F7"
+}
