@@ -868,12 +868,12 @@
     let currentDaysInYear = 365;
     const yearProgressFormatters = {
       en: new Intl.NumberFormat("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
       }),
       es: new Intl.NumberFormat("es-PR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
       })
     };
 
@@ -1057,14 +1057,18 @@
     let previousTickKey = null;
     let clockAudioContext = null;
 
+    function isClockPageActive() {
+      return !document.hidden && document.hasFocus();
+    }
+
     async function enableClockSound() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
 
-      if (!AudioContext) {
+      if (!AudioContext || !isClockPageActive()) {
         return;
       }
 
-      if (!clockAudioContext) {
+      if (!clockAudioContext || clockAudioContext.state === "closed") {
         clockAudioContext = new AudioContext();
       }
 
@@ -1073,13 +1077,40 @@
       }
 
       if (clockAudioContext.state === "running") {
-        document.removeEventListener("pointerdown", enableClockSound);
-        document.removeEventListener("keydown", enableClockSound);
+        document.removeEventListener("pointerdown", requestClockSound);
+        document.removeEventListener("keydown", requestClockSound);
+      }
+    }
+
+    function requestClockSound() {
+      enableClockSound().catch(() => {
+        // Browsers that block autoplay retry after a user interaction.
+      });
+    }
+
+    function suspendClockSound() {
+      if (clockAudioContext && clockAudioContext.state === "running") {
+        clockAudioContext.suspend().catch(() => {
+          // A closing page may dispose of the audio context first.
+        });
+      }
+    }
+
+    function syncClockSoundWithPageActivity() {
+      if (isClockPageActive()) {
+        requestClockSound();
+      } else {
+        suspendClockSound();
       }
     }
 
     function playClockTick(second) {
-      if (!clockAudioContext || clockAudioContext.state !== "running" || document.hidden) {
+      if (!isClockPageActive()) {
+        return;
+      }
+
+      if (!clockAudioContext || clockAudioContext.state !== "running") {
+        requestClockSound();
         return;
       }
 
@@ -1123,11 +1154,15 @@
       resonance.stop(now + 0.048);
     }
 
-    document.addEventListener("pointerdown", enableClockSound);
-    document.addEventListener("keydown", enableClockSound);
-    enableClockSound().catch(() => {
-      // The interaction listeners above retry when the browser blocks autoplay.
-    });
+    document.addEventListener("pointerdown", requestClockSound);
+    document.addEventListener("keydown", requestClockSound);
+    document.addEventListener("visibilitychange", syncClockSoundWithPageActivity);
+    window.addEventListener("focus", syncClockSoundWithPageActivity);
+    window.addEventListener("blur", suspendClockSound);
+    window.addEventListener("pageshow", syncClockSoundWithPageActivity);
+    window.addEventListener("pagehide", suspendClockSound);
+    window.addEventListener("load", requestClockSound, { once: true });
+    requestClockSound();
 
     function keepRotationMovingForward(nextRotation, previousRotation) {
       if (previousRotation === null) {
