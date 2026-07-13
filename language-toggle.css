@@ -1,0 +1,80 @@
+.header-actions {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  min-width: 0;
+}
+
+.language-toggle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28rem;
+  padding: 0;
+  color: var(--ink-soft);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.language-option {
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+}
+
+html[data-language="en"] .language-option[data-language-option="en"],
+html[data-language="es"] .language-option[data-language-option="es"] {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.language-toggle:hover .language-option,
+.language-toggle:focus-visible .language-option {
+  color: var(--ink);
+}
+
+.header-actions .language-toggle {
+  min-height: 0;
+  padding-left: 0;
+  border-left: 0;
+  font-size: 0.95rem;
+}
+
+.header-actions .language-toggle::before {
+  content: "■";
+  align-self: center;
+  margin-right: clamp(0.32rem, 0.8vw, 0.5rem);
+  color: var(--ink);
+  font-size: 0.58em;
+  line-height: 1;
+}
+
+.spanish-only {
+  display: none;
+}
+
+html[data-language="es"] .spanish-only {
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .header-actions .language-toggle {
+    font-size: 0.86rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.65rem;
+  }
+
+  .language-toggle {
+    flex: 0 0 auto;
+  }
+
+}

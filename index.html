@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-language="en" data-title-en="Lex Tariq" data-title-es="Lex Tariq">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#F4F5F7" />
+  <meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1015" media="(prefers-color-scheme: dark)" />
 
   <title>Lex Tariq</title>
   <meta name="title" content="Lex Tariq" />
@@ -114,9 +115,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="symbol-glimmer.css">
+  <link rel="stylesheet" href="language-toggle.css">
   <script src="symbol-glimmer.js" defer></script>
+  <script src="language-toggle.js" defer></script>
 
   <style>
     :root {
@@ -244,6 +247,14 @@
       font-weight: 400;
       line-height: 1.08;
       color: var(--ink-soft);
+    }
+
+    .home-language-toggle {
+      position: absolute;
+      top: clamp(0.85rem, 3vw, 2.45rem);
+      right: clamp(0.85rem, 3vw, 2.45rem);
+      z-index: 2;
+      font-size: 0.7rem;
     }
 
     .time-row {
@@ -586,13 +597,19 @@
   </svg>
 
   <div class="page">
+    <button class="language-toggle home-language-toggle" type="button" data-language-toggle aria-label="Cambiar a español" aria-pressed="false">
+      <span class="language-option" data-language-option="en">EN</span>
+      <span aria-hidden="true">/</span>
+      <span class="language-option" data-language-option="es">ES</span>
+    </button>
+
     <header class="hero">
-      <h2 class="site-title">Lex Tariq</h2>
-      <h3 class="site-subtitle">él/he/him/his</h3>
+      <h1 class="site-title">Lex Tariq</h1>
+      <p class="site-subtitle">él/he/him/his</p>
     </header>
 
-    <section class="time-row" aria-label="Calendar and clock in fixed GMT-4 time">
-      <div class="calendar" aria-label="Current month calendar">
+    <section class="time-row" aria-label="Calendar and clock in fixed GMT-4 time" data-aria-label-en="Calendar and clock in fixed GMT-4 time" data-aria-label-es="Calendario y reloj en horario fijo GMT-4">
+      <div class="calendar" aria-label="Current month calendar" data-aria-label-en="Current month calendar" data-aria-label-es="Calendario del mes actual">
         <div class="calendar-header">
           <span class="calendar-month" id="calendarMonth"></span>
           <span class="calendar-year" id="calendarYear"></span>
@@ -601,13 +618,13 @@
         <div class="days" id="calendarDays"></div>
       </div>
 
-      <div class="clock-card" aria-label="Analog clock in fixed GMT-4 time">
+      <div class="clock-card" aria-label="Analog clock in fixed GMT-4 time" data-aria-label-en="Analog clock in fixed GMT-4 time" data-aria-label-es="Reloj analógico en horario fijo GMT-4">
         <span class="clock-number twelve">12</span>
         <span class="clock-number three">3</span>
         <span class="clock-number six">6</span>
         <span class="clock-number nine">9</span>
 
-        <svg class="clock-flag" viewBox="0 0 45 30" aria-label="Puerto Rican flag" role="img">
+        <svg class="clock-flag" viewBox="0 0 45 30" aria-label="Puerto Rican flag" data-aria-label-en="Puerto Rican flag" data-aria-label-es="Bandera de Puerto Rico" role="img">
           <rect x="0" y="0" width="45" height="6" fill="#B31B2C"></rect>
           <rect x="0" y="6" width="45" height="6" fill="#FFFFFF"></rect>
           <rect x="0" y="12" width="45" height="6" fill="#B31B2C"></rect>
@@ -627,8 +644,8 @@
     </section>
 
     <footer>
-      Copyright © <span id="copyrightYear"></span> Lex Tariq<br>
-      <a href="/font.html">Font Licensing</a>
+      <span data-en="Copyright" data-es="Derechos de autor">Copyright</span> © <span id="copyrightYear"></span> Lex Tariq<br>
+      <a href="/about.html" data-en="About" data-es="Acerca de">About</a> / <a href="/font.html" data-en="Font Licensing" data-es="Licencia tipográfica">Font Licensing</a>
     </footer>
   </div>
 
@@ -748,6 +765,15 @@
 
         dayElement.className = "day";
         dayElement.textContent = day;
+        const dateLocale = document.documentElement.lang === "es" ? "es-PR" : "en-US";
+
+        dayElement.setAttribute("aria-label", date.toLocaleDateString(dateLocale, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "UTC"
+        }));
 
         if (weekday === 0 || weekday === 6) {
           dayElement.classList.add("weekend");
@@ -884,7 +910,7 @@
       document.getElementById("hourHand").style.setProperty("--rotation", `${hourRotation}deg`);
       document.getElementById("minuteHand").style.setProperty("--rotation", `${minuteRotation}deg`);
       document.getElementById("secondHand").style.setProperty("--rotation", `${secondRotation}deg`);
-      document.getElementById("ampm").textContent = parts.hour >= 12 ? "pm" : "am";
+      document.getElementById("ampm").textContent = parts.hour >= 12 ? "p.m." : "a.m.";
     }
 
     let clockTimer = null;
@@ -928,6 +954,10 @@
     syncThemeWithSystem();
     renderCalendar();
     startRealtimeClock();
+    document.addEventListener("site-language-change", () => {
+      renderCalendar();
+      updateClock();
+    });
     document.addEventListener("visibilitychange", resyncClockAfterVisibilityChange);
   </script>
 </body>

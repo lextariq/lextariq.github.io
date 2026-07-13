@@ -1,6 +1,6 @@
 (function () {
   const initialDelayRange = [0, 0];
-  const restingDelayRange = [35000, 75000];
+  const restingDelayRange = [30000, 65000];
   const backgroundSymbols = [
     "⊹", "✱", "⟡", "✦", "☼", "❋", "₊", "✷", "∷", "✵",
     "✹", "⁂", "⁕", "✲", "⁙", "⋆", "+", "✶", "*", "✧",

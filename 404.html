@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en" data-language="en" data-title-en="Lex Tariq – 404" data-title-es="Lex Tariq – 404">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1015" media="(prefers-color-scheme: dark)" />
+
+  <title>Lex Tariq – 404</title>
+  <meta name="title" content="Lex Tariq – 404" />
+  <meta name="description" content="Page not found." />
+  <meta name="author" content="Lex Tariq" />
+  <meta name="application-name" content="Lex Tariq – 404" />
+  <meta name="robots" content="noindex, follow" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <script>
+    (function () {
+      const query = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+      document.documentElement.dataset.theme = query && query.matches ? "dark" : "light";
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="language-toggle.css">
+  <script src="language-toggle.js" defer></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #F4F5F7;
+      --background-text: #d8d8d8;
+      --ink: #141414;
+      --ink-soft: #5e5e5e;
+      --rule: rgba(0, 0, 0, 0.22);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --background: #0d1015;
+        --background-text: #3b4553;
+        --ink: #f2eee7;
+        --ink-soft: #c7cbd2;
+        --rule: rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --background: #0d1015;
+      --background-text: #3b4553;
+      --ink: #f2eee7;
+      --ink-soft: #c7cbd2;
+      --rule: rgba(255, 255, 255, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--background);
+    }
+
+    body {
+      color: var(--ink);
+      font-family: "EB Garamond", Garamond, Georgia, serif;
+      overflow: hidden;
+    }
+
+    .star-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+
+    .page-header,
+    .page-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-header {
+      border-bottom: 1px solid var(--rule);
+      background: color-mix(in srgb, var(--background) 88%, transparent);
+    }
+
+    .header-inner {
+      width: min(78rem, 100%);
+      min-height: 4.25rem;
+      margin: 0 auto;
+      padding: 0.8rem clamp(1rem, 3vw, 2.45rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .brand:hover,
+    .brand:focus-visible {
+      color: var(--ink);
+    }
+
+    .section-nav {
+      display: flex;
+      align-items: baseline;
+      gap: 0.52rem;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .section-nav a {
+      color: inherit;
+      text-decoration: none;
+      text-underline-offset: 0.18em;
+    }
+
+    .section-nav a:hover,
+    .section-nav a:focus-visible,
+    .section-nav a[aria-current="page"] {
+      color: var(--ink);
+      text-decoration: underline;
+    }
+
+    .page-shell {
+      min-height: calc(100svh - 4.25rem);
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    main {
+      width: min(78rem, 100%);
+      margin: 0 auto;
+      padding: clamp(1.35rem, 3vw, 2.5rem) clamp(1rem, 3vw, 2.45rem);
+    }
+
+    h1 {
+      width: min(70rem, 100%);
+      margin: 0;
+      font-size: clamp(3.5rem, 10vw, 7.5rem);
+      font-weight: 500;
+      line-height: 0.8;
+      letter-spacing: -0.04em;
+    }
+
+    .error-subtitle {
+      margin: 1.15rem 0 0;
+      color: var(--ink-soft);
+      font-size: clamp(1.02rem, 2vw, 1.22rem);
+      line-height: 1.35;
+    }
+
+    .page-footer {
+      width: min(78rem, 100%);
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 3vw, 2.45rem) 2rem;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      .section-nav {
+        font-size: 0.86rem;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.32rem;
+      }
+
+      .section-nav {
+        white-space: normal;
+      }
+
+      .page-shell {
+        min-height: calc(100svh - 5.5rem);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas class="star-canvas" id="starCanvas" aria-hidden="true"></canvas>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <a class="brand" href="/">Lex Tariq</a>
+      <div class="header-actions">
+        <nav class="section-nav" aria-label="Secondary pages" data-aria-label-en="Secondary pages" data-aria-label-es="Páginas secundarias">
+          <a href="/about.html" data-en="About" data-es="Acerca de">About</a>
+          <span aria-hidden="true">/</span>
+          <a href="/font.html" data-en="Font Licensing" data-es="Licencia tipográfica">Font Licensing</a>
+        </nav>
+        <button class="language-toggle" type="button" data-language-toggle aria-label="Cambiar a español" aria-pressed="false">
+          <span class="language-option" data-language-option="en">EN</span>
+          <span aria-hidden="true">/</span>
+          <span class="language-option" data-language-option="es">ES</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <main>
+      <h1>404</h1>
+      <p class="error-subtitle" data-en="Page not found." data-es="Página no encontrada.">Page not found.</p>
+    </main>
+
+    <footer class="page-footer"><span data-en="Copyright" data-es="Derechos de autor">Copyright</span> © <span id="copyrightYear"></span> Lex Tariq</footer>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("starCanvas");
+    const context = canvas.getContext("2d");
+    const allStarSymbols = [
+      "⊹", "✱", "⟡", "✦", "☼", "❋", "₊", "✷", "∷",
+      "✵", "✹", "⁂", "⁕", "✲", "⁙", "⋆", "+", "✶",
+      "*", "✧", "⁑", "✮", "×", "✺", ".•*", "⭒", "⁘"
+    ];
+    const stars = [];
+    const shuffledSymbols = [...allStarSymbols].sort(() => Math.random() - 0.5);
+    const sessionSymbols = shuffledSymbols.slice(0, 5 + Math.floor(Math.random() * 5));
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+    function getStarColor() {
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue("--background-text")
+        .trim();
+    }
+
+    function drawStar(star) {
+      const width = canvas.width / pixelRatio;
+      const height = canvas.height / pixelRatio;
+
+      context.save();
+      context.translate(star.x * width, star.y * height);
+      context.rotate(star.rotation);
+      context.globalAlpha = star.opacity;
+      context.fillStyle = getStarColor();
+      context.font = `500 ${star.size}px "EB Garamond", Garamond, Georgia, serif`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(star.symbol, 0, 0);
+      context.restore();
+    }
+
+    function redrawStars() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(drawStar);
+    }
+
+    function resizeCanvas() {
+      canvas.width = Math.round(window.innerWidth * pixelRatio);
+      canvas.height = Math.round(window.innerHeight * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      redrawStars();
+    }
+
+    function addStar() {
+      const growthSize = 12 + Math.sqrt(stars.length + 1) * 5;
+      const star = {
+        symbol: sessionSymbols[Math.floor(Math.random() * sessionSymbols.length)],
+        x: Math.random(),
+        y: Math.random(),
+        size: growthSize * (0.72 + Math.random() * 0.68),
+        rotation: Math.random() * Math.PI * 2,
+        opacity: 0.58 + Math.random() * 0.36
+      };
+
+      stars.push(star);
+      drawStar(star);
+    }
+
+    function addNextPile() {
+      const count = 2 + Math.floor(Math.random() * 3);
+
+      for (let index = 0; index < count; index++) {
+        addStar();
+      }
+    }
+
+    function syncThemeWithSystem() {
+      if (!window.matchMedia) {
+        return;
+      }
+
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+      function applyTheme(query) {
+        document.documentElement.dataset.theme = query.matches ? "dark" : "light";
+        redrawStars();
+      }
+
+      applyTheme(mediaQuery);
+
+      if (typeof mediaQuery.addEventListener === "function") {
+        mediaQuery.addEventListener("change", applyTheme);
+      } else if (typeof mediaQuery.addListener === "function") {
+        mediaQuery.addListener(applyTheme);
+      }
+    }
+
+    resizeCanvas();
+
+    const initialStarCount = 8;
+
+    for (let index = 0; index < initialStarCount; index++) {
+      addStar();
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(redrawStars);
+    }
+
+    window.setInterval(addNextPile, 2500);
+    window.addEventListener("resize", resizeCanvas);
+    document.getElementById("copyrightYear").textContent = new Date().getFullYear();
+    syncThemeWithSystem();
+  </script>
+</body>
+</html>
