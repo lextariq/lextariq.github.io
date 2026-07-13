@@ -236,14 +236,39 @@
     const canvas = document.getElementById("starCanvas");
     const context = canvas.getContext("2d");
     const allStarSymbols = [
-      "⊹", "✱", "⟡", "✦", "☼", "❋", "₊", "✷", "∷",
-      "✵", "✹", "⁂", "⁕", "✲", "⁙", "⋆", "+", "✶",
-      "*", "✧", "⁑", "✮", "×", "✺", ".•*", "⭒", "⁘"
+      "⊹", "✱", "⟡", "✦", "☼", "❋", "✷", "∷", "✵",
+      "✹", "⁂", "⁕", "✲", "⁙", "+", "✶", "*", "✧",
+      "⁑", "✮", "×", "✺", ".•*", "⭒", "⁘", "፨", "☆"
     ];
     const stars = [];
-    const shuffledSymbols = [...allStarSymbols].sort(() => Math.random() - 0.5);
-    const sessionSymbols = shuffledSymbols.slice(0, 5 + Math.floor(Math.random() * 5));
+    const maximumStarCount = 200;
+    let symbolQueue = [];
+    let previousSymbol = null;
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+    function shuffle(items) {
+      const shuffled = [...items];
+
+      for (let index = shuffled.length - 1; index > 0; index--) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+      }
+
+      return shuffled;
+    }
+
+    function getNextStarSymbol() {
+      if (symbolQueue.length === 0) {
+        symbolQueue = shuffle(allStarSymbols);
+
+        if (symbolQueue[0] === previousSymbol) {
+          [symbolQueue[0], symbolQueue[1]] = [symbolQueue[1], symbolQueue[0]];
+        }
+      }
+
+      previousSymbol = symbolQueue.shift();
+      return previousSymbol;
+    }
 
     function getStarColor() {
       return getComputedStyle(document.documentElement)
@@ -282,7 +307,7 @@
     function addStar() {
       const growthSize = 12 + Math.sqrt(stars.length + 1) * 5;
       const star = {
-        symbol: sessionSymbols[Math.floor(Math.random() * sessionSymbols.length)],
+        symbol: getNextStarSymbol(),
         x: Math.random(),
         y: Math.random(),
         size: growthSize * (0.72 + Math.random() * 0.68),
@@ -296,6 +321,12 @@
 
     function addNextPile() {
       const count = 2 + Math.floor(Math.random() * 3);
+      const removalCount = Math.max(0, stars.length + count - maximumStarCount);
+
+      if (removalCount > 0) {
+        stars.splice(0, removalCount);
+        redrawStars();
+      }
 
       for (let index = 0; index < count; index++) {
         addStar();

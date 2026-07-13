@@ -165,10 +165,22 @@
     .symbol-layer {
       position: fixed;
       inset: 0;
+      z-index: 0;
       width: 100vw;
       height: 100vh;
+      user-select: none;
       pointer-events: none;
-      opacity: 0.52;
+      opacity: 0.9;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .symbol-layer {
+        opacity: 0.48;
+      }
+    }
+
+    html[data-theme="dark"] .symbol-layer {
+      opacity: 0.48;
     }
 
     .symbol-text {
@@ -333,7 +345,7 @@
 </head>
 <body>
   <svg class="symbol-layer" aria-hidden="true" focusable="false">
-    <g id="licenseSymbolField" data-randomize-symbols data-glimmer-all></g>
+    <g id="licenseSymbolField" data-randomize-symbols></g>
   </svg>
 
   <header class="page-header">
@@ -417,21 +429,39 @@ THE FONT SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
   <script>
     function renderLicenseSymbols() {
       const namespace = "http://www.w3.org/2000/svg";
-      const symbols = ["✦", "⁂", "⭒", "⊹", "✱", "✧", "⁕", "⋆"];
+      const symbols = [
+        "⊹", "✱", "⟡", "✦", "☼", "❋", "✷", "∷", "✵",
+        "✹", "⁂", "⁕", "✲", "⁙", "+", "✶", "*", "✧",
+        "⁑", "✮", "×", "✺", ".•*", "⭒", "⁘", "፨", "☆"
+      ];
       const symbolField = document.getElementById("licenseSymbolField");
-      const rows = 6;
-      const columns = 13;
+      const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      const horizontalSpacing = 121;
+      const verticalSpacing = 76;
+      const rows = Math.ceil(viewportHeight / verticalSpacing) + 1;
+      const columns = Math.ceil(viewportWidth / horizontalSpacing) + 2;
+      let symbolIndex = 0;
 
       for (let row = 0; row < rows; row++) {
         for (let column = 0; column < columns; column++) {
+          const x = -horizontalSpacing + column * horizontalSpacing + (row % 4) * 30;
+
+          if (x < 0 || x > viewportWidth) {
+            continue;
+          }
+
           const text = document.createElementNS(namespace, "text");
           text.setAttribute("class", "symbol-text");
-          text.setAttribute("x", `${1 + column * 7.6 + (row % 2) * 3}%`);
-          text.setAttribute("y", `${8 + row * 17}%`);
-          text.setAttribute("font-size", "15");
+          text.setAttribute("x", x);
+          text.setAttribute("y", row * verticalSpacing + 35);
           text.setAttribute("opacity", "1");
-          text.textContent = symbols[(row * columns + column) % symbols.length];
+          text.setAttribute("font-family", "'EB Garamond', Garamond, Georgia, serif");
+          text.setAttribute("font-size", "15");
+          text.setAttribute("text-anchor", "middle");
+          text.textContent = symbols[symbolIndex % symbols.length];
           symbolField.appendChild(text);
+          symbolIndex++;
         }
       }
     }

@@ -168,10 +168,22 @@
     .symbol-layer {
       position: fixed;
       inset: 0;
+      z-index: 0;
       width: 100vw;
       height: 100vh;
+      user-select: none;
       pointer-events: none;
-      opacity: 0.52;
+      opacity: 0.9;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .symbol-layer {
+        opacity: 0.48;
+      }
+    }
+
+    html[data-theme="dark"] .symbol-layer {
+      opacity: 0.48;
     }
 
     .symbol-text {
@@ -448,7 +460,7 @@
 
 <body>
   <svg class="symbol-layer" aria-hidden="true" focusable="false">
-    <g id="aboutSymbolField" data-randomize-symbols data-glimmer-all></g>
+    <g id="aboutSymbolField" data-randomize-symbols></g>
   </svg>
 
   <header class="page-header">
@@ -474,8 +486,8 @@
       <h1 id="pageTitle" data-en="About" data-es="Acerca de">About</h1>
       <p class="lede">
         <span data-en="Hi, I’m" data-es="Hola, soy">Hi, I’m</span>
-        <strong>Lex Tariq</strong> (él/he/him/his).
-        <span data-en="Born, raised, and based in Puerto Rico." data-es="Nací, crecí y vivo en Puerto Rico.">Born, raised, and based in Puerto Rico.</span>
+        <strong>Lex Tariq</strong>
+        <span data-en="(he/him/his). Born, raised, and based in Puerto Rico." data-es="(él). Nací, crecí y actualmente vivo en Puerto Rico.">(he/him/his). Born, raised, and based in Puerto Rico.</span>
       </p>
     </section>
 
@@ -504,13 +516,14 @@
             <li data-en="music" data-es="música">music</li>
             <li data-en="computers" data-es="computadoras">computers</li>
             <li data-en="software" data-es="software">software</li>
-            <li data-en="touching grass" data-es="tocar pasto">touching grass</li>
-            <li data-en="having fun" data-es="divertirse">having fun</li>
+            <li data-en="touching grass" data-es="salir">touching grass</li>
+            <li data-en="fun" data-es="divertirse">fun</li>
             <li data-en="formatting" data-es="formateo">formatting</li>
             <li data-en="vinyl records" data-es="discos de vinilo">vinyl records</li>
             <li data-en="social media" data-es="redes sociales">social media</li>
             <li data-en="languages" data-es="idiomas">languages</li>
             <li data-en="depth" data-es="profundidad">depth</li>
+            <li data-en="learning" data-es="aprender">learning</li>
             <li data-en="possibility" data-es="posibilidad">possibility</li>
             <li data-en="shopping" data-es="ir de compras">shopping</li>
             <li data-en="break time" data-es="tiempo de descanso">break time</li>
@@ -522,6 +535,10 @@
           <ul class="preference-list">
             <li data-en="boredom" data-es="aburrimiento">boredom</li>
             <li data-en="quirkiness" data-es="peculiaridad">quirkiness</li>
+            <li data-en="nostalgia" data-es="nostalgia">nostalgia</li>
+            <li data-en="routine" data-es="rutina">routine</li>
+            <li data-en="small talk" data-es="conversaciones triviales">small talk</li>
+            <li data-en="minimalism" data-es="minimalismo">minimalism</li>
           </ul>
         </div>
 
@@ -531,8 +548,8 @@
             <li data-en="disrespect" data-es="falta de respeto">disrespect</li>
             <li data-en="redundancy" data-es="redundancia">redundancy</li>
             <li data-en="narrow thinking" data-es="mentalidad limitada">narrow thinking</li>
-            <li data-en="“it’s enough”" data-es="“ya es suficiente”">“it’s enough”</li>
-            <li data-en="burnout" data-es="agotamiento">burnout</li>
+            <li data-en="complacency" data-es="complacencia">complacency</li>
+            <li data-en="burnout" data-es="agotamiento por exceso de trabajo">burnout</li>
           </ul>
         </div>
       </section>
@@ -544,21 +561,39 @@
   <script>
     function renderAboutSymbols() {
       const namespace = "http://www.w3.org/2000/svg";
-      const symbols = ["✦", "⁂", "⭒", "⊹", "✱", "✧", "⁕", "⋆"];
+      const symbols = [
+        "⊹", "✱", "⟡", "✦", "☼", "❋", "✷", "∷", "✵",
+        "✹", "⁂", "⁕", "✲", "⁙", "+", "✶", "*", "✧",
+        "⁑", "✮", "×", "✺", ".•*", "⭒", "⁘", "፨", "☆"
+      ];
       const symbolField = document.getElementById("aboutSymbolField");
-      const rows = 6;
-      const columns = 13;
+      const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      const horizontalSpacing = 121;
+      const verticalSpacing = 76;
+      const rows = Math.ceil(viewportHeight / verticalSpacing) + 1;
+      const columns = Math.ceil(viewportWidth / horizontalSpacing) + 2;
+      let symbolIndex = 0;
 
       for (let row = 0; row < rows; row++) {
         for (let column = 0; column < columns; column++) {
+          const x = -horizontalSpacing + column * horizontalSpacing + (row % 4) * 30;
+
+          if (x < 0 || x > viewportWidth) {
+            continue;
+          }
+
           const text = document.createElementNS(namespace, "text");
           text.setAttribute("class", "symbol-text");
-          text.setAttribute("x", `${1 + column * 7.6 + (row % 2) * 3}%`);
-          text.setAttribute("y", `${8 + row * 17}%`);
-          text.setAttribute("font-size", "15");
+          text.setAttribute("x", x);
+          text.setAttribute("y", row * verticalSpacing + 35);
           text.setAttribute("opacity", "1");
-          text.textContent = symbols[(row * columns + column) % symbols.length];
+          text.setAttribute("font-family", "'EB Garamond', Garamond, Georgia, serif");
+          text.setAttribute("font-size", "15");
+          text.setAttribute("text-anchor", "middle");
+          text.textContent = symbols[symbolIndex % symbols.length];
           symbolField.appendChild(text);
+          symbolIndex++;
         }
       }
     }

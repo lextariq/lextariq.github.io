@@ -1,6 +1,6 @@
 (function () {
   const initialDelayRange = [0, 0];
-  const restingDelayRange = [30000, 65000];
+  const glimmerDelayRange = [2500, 4500];
   const backgroundSymbols = [
     "⊹", "✱", "⟡", "✦", "☼", "❋", "₊", "✷", "∷", "✵",
     "✹", "⁂", "⁕", "✲", "⁙", "⋆", "+", "✶", "*", "✧",
@@ -71,36 +71,22 @@
       return;
     }
 
-    let queue = [];
-
-    function getNextSymbol() {
-      if (queue.length === 0) {
-        queue = shuffle(eligibleSymbols);
-      }
-
-      return queue.pop();
-    }
-
     function scheduleNext(delayRange) {
       window.setTimeout(() => {
         if (document.hidden) {
-          scheduleNext(restingDelayRange);
+          scheduleNext(glimmerDelayRange);
           return;
         }
 
-        const maximumBatchSize = Math.min(75, eligibleSymbols.length);
-        const batchSize = maximumBatchSize;
-        const batch = [];
-
-        while (batch.length < batchSize) {
-          const symbol = getNextSymbol();
-
-          if (!batch.includes(symbol)) {
-            batch.push(symbol);
-          }
-        }
-
-        let remainingAnimations = batch.length;
+        const availableSymbols = eligibleSymbols.filter(
+          symbol => !symbol.classList.contains("is-glimmering")
+        );
+        const batchSize = Math.min(
+          24,
+          Math.max(6, Math.ceil(eligibleSymbols.length * 0.2)),
+          availableSymbols.length
+        );
+        const batch = shuffle(availableSymbols).slice(0, batchSize);
 
         batch.forEach((symbol, index) => {
           symbol.style.setProperty("--glimmer-delay", `${index * 0.08}s`);
@@ -108,13 +94,10 @@
           symbol.addEventListener("animationend", () => {
             symbol.classList.remove("is-glimmering");
             symbol.style.removeProperty("--glimmer-delay");
-            remainingAnimations--;
-
-            if (remainingAnimations === 0) {
-              scheduleNext(restingDelayRange);
-            }
           }, { once: true });
         });
+
+        scheduleNext(glimmerDelayRange);
       }, randomDelay(delayRange));
     }
 

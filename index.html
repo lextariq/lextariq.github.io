@@ -300,13 +300,54 @@
     .calendar-header {
       position: relative;
       z-index: 2;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      width: 100%;
       margin: 0 0 0.72rem;
       padding: 0.05rem 0.25rem 0.62rem;
+      color: inherit;
+      background: transparent;
+      border: 0;
       border-bottom: 2px solid var(--primary-border);
+      border-radius: 0;
+      font: inherit;
       font-weight: 500;
+      text-align: left;
+      appearance: none;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .calendar-header:focus-visible {
+      outline: 1.5px solid var(--ink);
+      outline-offset: 0.25rem;
+    }
+
+    .calendar-left-toggle {
+      display: grid;
+      justify-self: start;
+    }
+
+    .calendar-toggle-value {
+      grid-area: 1 / 1;
+      transition: opacity 260ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity;
+    }
+
+    .calendar-progress {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .calendar-header.is-progress-visible .calendar-month {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .calendar-header.is-progress-visible .calendar-progress {
+      opacity: 1;
     }
 
     .calendar-month {
@@ -314,11 +355,19 @@
       letter-spacing: 0.035em;
     }
 
+    .calendar-progress {
+      color: var(--ink);
+      font-size: 1.34rem;
+      font-weight: 500;
+      letter-spacing: 0.035em;
+      font-variant-numeric: tabular-nums;
+    }
+
     .calendar-year {
       color: var(--ink-soft);
       font-size: 0.98rem;
       font-weight: 400;
-      letter-spacing: 0.045em;
+      letter-spacing: 0.035em;
     }
 
     .days {
@@ -367,6 +416,53 @@
     .clock-card {
       overflow: hidden;
       isolation: isolate;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      text-align: initial;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .clock-card:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 11px;
+    }
+
+    .digital-clock {
+      position: absolute;
+      top: 27%;
+      left: 50%;
+      z-index: 3;
+      display: inline-flex;
+      align-items: baseline;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      opacity: 0;
+      transform: translate(-50%, -50%) translateY(0.25rem);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none;
+    }
+
+    .clock-card.is-digital-visible .digital-clock {
+      opacity: 0.94;
+      transform: translate(-50%, -50%);
+    }
+
+    .digital-time {
+      white-space: nowrap;
+      font-size: 0.96rem;
+      font-weight: 500;
+      letter-spacing: 0.025em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .digital-clock,
+      .calendar-toggle-value,
+      .ampm {
+        transition: none;
+      }
     }
 
     .clock-number {
@@ -479,7 +575,12 @@
       font-size: 0.86rem;
       letter-spacing: 0.075em;
       opacity: 0.78;
+      transition: opacity 180ms ease;
       z-index: 3;
+    }
+
+    .clock-card.is-digital-visible .ampm {
+      opacity: 0;
     }
 
     footer {
@@ -534,6 +635,14 @@
         font-size: 0.82rem;
       }
 
+      .calendar-progress {
+        font-size: 1.08rem;
+      }
+
+      .calendar-year {
+        font-size: 0.82rem;
+      }
+
       .day {
         min-height: 1.48rem;
         font-size: 0.8rem;
@@ -545,6 +654,10 @@
 
       .ampm {
         font-size: 0.74rem;
+      }
+
+      .digital-time {
+        font-size: 0.8rem;
       }
 
       .clock-flag {
@@ -610,19 +723,26 @@
 
     <section class="time-row" aria-label="Calendar and clock in fixed GMT-4 time" data-aria-label-en="Calendar and clock in fixed GMT-4 time" data-aria-label-es="Calendario y reloj en horario fijo GMT-4">
       <div class="calendar" aria-label="Current month calendar" data-aria-label-en="Current month calendar" data-aria-label-es="Calendario del mes actual">
-        <div class="calendar-header">
-          <span class="calendar-month" id="calendarMonth"></span>
+        <button class="calendar-header" id="calendarHeaderToggle" type="button" aria-pressed="false">
+          <span class="calendar-left-toggle">
+            <span class="calendar-toggle-value calendar-month" id="calendarMonth"></span>
+            <span class="calendar-toggle-value calendar-progress" id="yearProgressStatus" aria-hidden="true"></span>
+          </span>
           <span class="calendar-year" id="calendarYear"></span>
-        </div>
+        </button>
 
         <div class="days" id="calendarDays"></div>
       </div>
 
-      <div class="clock-card" aria-label="Analog clock in fixed GMT-4 time" data-aria-label-en="Analog clock in fixed GMT-4 time" data-aria-label-es="Reloj analógico en horario fijo GMT-4">
+      <button class="clock-card" id="clockCard" type="button" aria-controls="digitalClock" aria-expanded="false" aria-label="Analog clock in fixed GMT-4 time. Activate to show digital time." data-aria-label-en="Analog clock in fixed GMT-4 time. Activate to show digital time." data-aria-label-es="Reloj analógico en horario fijo GMT-4. Actívalo para mostrar la hora digital.">
         <span class="clock-number twelve">12</span>
         <span class="clock-number three">3</span>
         <span class="clock-number six">6</span>
         <span class="clock-number nine">9</span>
+
+        <span class="digital-clock" id="digitalClock" aria-hidden="true">
+          <span class="digital-time" id="digitalTime"></span>
+        </span>
 
         <svg class="clock-flag" viewBox="0 0 45 30" aria-label="Puerto Rican flag" data-aria-label-en="Puerto Rican flag" data-aria-label-es="Bandera de Puerto Rico" role="img">
           <rect x="0" y="0" width="45" height="6" fill="#B31B2C"></rect>
@@ -640,7 +760,7 @@
         <div class="hand minute-hand" id="minuteHand"></div>
         <div class="hand second-hand" id="secondHand"></div>
         <div class="pin" aria-hidden="true"></div>
-      </div>
+      </button>
     </section>
 
     <footer>
@@ -729,6 +849,128 @@
         minute: date.getUTCMinutes(),
         second: date.getUTCSeconds()
       };
+    }
+
+    function padTimePart(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    let showYearProgress = false;
+    let currentCalendarHeaderParts = null;
+    let currentFormattedProgress = "";
+    const yearProgressFormatters = {
+      en: new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }),
+      es: new Intl.NumberFormat("es-PR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
+    };
+
+    function updateCalendarHeaderView() {
+      if (!currentCalendarHeaderParts) {
+        return;
+      }
+
+      const language = document.documentElement.dataset.language === "es" ? "es" : "en";
+      const calendarHeaderToggle = document.getElementById("calendarHeaderToggle");
+
+      calendarHeaderToggle.classList.toggle("is-progress-visible", showYearProgress);
+      calendarHeaderToggle.setAttribute("aria-pressed", String(showYearProgress));
+      document.getElementById("calendarMonth").setAttribute(
+        "aria-hidden",
+        String(showYearProgress)
+      );
+      document.getElementById("yearProgressStatus").setAttribute(
+        "aria-hidden",
+        String(!showYearProgress)
+      );
+      calendarHeaderToggle.setAttribute(
+        "aria-label",
+        language === "es"
+          ? showYearProgress
+            ? `El año ${currentCalendarHeaderParts.year} está ${currentFormattedProgress}% completado. Actívalo para mostrar el mes y el año.`
+            : `Mes ${currentCalendarHeaderParts.month + 1}, año ${currentCalendarHeaderParts.year}. Actívalo para mostrar el progreso del año.`
+          : showYearProgress
+            ? `The year ${currentCalendarHeaderParts.year} is ${currentFormattedProgress}% complete. Activate to show the month and year.`
+            : `Month ${currentCalendarHeaderParts.month + 1}, year ${currentCalendarHeaderParts.year}. Activate to show year progress.`
+      );
+    }
+
+    function updateTemporalStatus(parts) {
+      const language = document.documentElement.dataset.language === "es" ? "es" : "en";
+      const currentTime = Date.UTC(
+        parts.year,
+        parts.month,
+        parts.day,
+        parts.hour,
+        parts.minute,
+        parts.second
+      );
+      const yearStart = Date.UTC(parts.year, 0, 1);
+      const nextYearStart = Date.UTC(parts.year + 1, 0, 1);
+      const progress = Math.min(
+        100,
+        Math.max(0, ((currentTime - yearStart) / (nextYearStart - yearStart)) * 100)
+      );
+      const formattedProgress = yearProgressFormatters[language].format(progress);
+
+      const yearProgressStatus = document.getElementById("yearProgressStatus");
+
+      yearProgressStatus.textContent = `${formattedProgress}%`;
+      yearProgressStatus.setAttribute(
+        "aria-label",
+        language === "es"
+          ? `${formattedProgress}% del año completado`
+          : `${formattedProgress}% of the year complete`
+      );
+      currentCalendarHeaderParts = parts;
+      currentFormattedProgress = formattedProgress;
+      updateCalendarHeaderView();
+    }
+
+    let digitalClockFormat = null;
+
+    function updateDigitalClock(parts) {
+      const clockCard = document.getElementById("clockCard");
+      const digitalClock = document.getElementById("digitalClock");
+      const digitalTime = document.getElementById("digitalTime");
+      const language = document.documentElement.dataset.language === "es" ? "es" : "en";
+      const isVisible = digitalClockFormat !== null;
+
+      clockCard.classList.toggle("is-digital-visible", isVisible);
+      clockCard.setAttribute("aria-expanded", String(isVisible));
+      digitalClock.setAttribute("aria-hidden", String(!isVisible));
+
+      if (!isVisible) {
+        clockCard.setAttribute(
+          "aria-label",
+          language === "es"
+            ? "Reloj analógico en horario fijo GMT-4. Actívalo para mostrar la hora digital."
+            : "Analog clock in fixed GMT-4 time. Activate to show digital time."
+        );
+        return;
+      }
+
+      const useTwentyFourHours = digitalClockFormat === 24;
+      const meridiem = parts.hour >= 12 ? "p.m." : "a.m.";
+      const displayHour = useTwentyFourHours ? parts.hour : (parts.hour % 12 || 12);
+      const time = `${useTwentyFourHours ? padTimePart(displayHour) : displayHour}:${padTimePart(parts.minute)}:${padTimePart(parts.second)}${useTwentyFourHours ? "" : ` ${meridiem}`}`;
+
+      digitalTime.textContent = time;
+
+      clockCard.setAttribute(
+        "aria-label",
+        language === "es"
+          ? useTwentyFourHours
+            ? `Hora digital ${time}, en formato de 24 horas. Actívalo para ocultar la hora digital.`
+            : `Hora digital ${time}, en formato de 12 horas. Actívalo para cambiar al formato de 24 horas.`
+          : useTwentyFourHours
+            ? `Digital time ${time}, in 24-hour format. Activate to hide the digital time.`
+            : `Digital time ${time}, in 12-hour format. Activate to switch to 24-hour time.`
+      );
     }
 
     let renderedCalendarDateKey = null;
@@ -911,6 +1153,8 @@
       document.getElementById("minuteHand").style.setProperty("--rotation", `${minuteRotation}deg`);
       document.getElementById("secondHand").style.setProperty("--rotation", `${secondRotation}deg`);
       document.getElementById("ampm").textContent = parts.hour >= 12 ? "p.m." : "a.m.";
+      updateTemporalStatus(parts);
+      updateDigitalClock(parts);
     }
 
     let clockTimer = null;
@@ -954,6 +1198,18 @@
     syncThemeWithSystem();
     renderCalendar();
     startRealtimeClock();
+    document.getElementById("calendarHeaderToggle").addEventListener("click", () => {
+      showYearProgress = !showYearProgress;
+      updateCalendarHeaderView();
+    });
+    document.getElementById("clockCard").addEventListener("click", () => {
+      digitalClockFormat = digitalClockFormat === null
+        ? 12
+        : digitalClockFormat === 12
+          ? 24
+          : null;
+      updateDigitalClock(getParts());
+    });
     document.addEventListener("site-language-change", () => {
       renderCalendar();
       updateClock();
